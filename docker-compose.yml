@@ -1,0 +1,28 @@
+services:
+  postgres-ms1:
+    image: postgres:15-alpine
+    container_name: postgres_ms1_users
+    environment:
+      POSTGRES_DB: db_users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata_ms1:/var/lib/postgresql/data
+
+  postgres-ms2:
+    image: postgres:15-alpine
+    container_name: postgres_ms2_transactions
+    environment:
+      POSTGRES_DB: db_transactions
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_ms2:/var/lib/postgresql/data
+
+volumes:
+  pgdata_ms1:
+  pgdata_ms2:

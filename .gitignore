@@ -1,0 +1,19 @@
+# VARIÁVEIS DE AMBIENTE 
+.env
+
+# JAVA / MAVEN
+target/
+*.class
+*.log
+
+# IDE (IntelliJ IDEA / VS Code)
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# SISTEMA OPERACIONAL
+.DS_Store
+Thumbs.db
+ehthumbs.db
