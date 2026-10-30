@@ -3,6 +3,7 @@ package com.financeiro.ms1usuarios.infrastructure.persistence.adapter;
 import com.financeiro.ms1usuarios.application.ports.out.UserRepositoryPort;
 import com.financeiro.ms1usuarios.domain.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UserPersistenceAdapter implements UserRepositoryPort {
@@ -20,5 +21,15 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     @Override
     public Optional<User> findByEmail(String email) {
         return Optional.empty();
+    }
+
+    @Override
+    public List<User> findAll() {
+        return findAll();
+    }
+
+    @Override
+    public void deletaById(Long id) {
+
     }
 }
