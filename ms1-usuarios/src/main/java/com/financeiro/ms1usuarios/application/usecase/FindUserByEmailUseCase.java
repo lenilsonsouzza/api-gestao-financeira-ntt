@@ -1,0 +1,17 @@
+package com.financeiro.ms1usuarios.application.usecase;
+
+import com.financeiro.ms1usuarios.application.ports.out.UserRepositoryPort;
+import com.financeiro.ms1usuarios.domain.model.User;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
+@RequiredArgsConstructor
+public class FindUserByEmailUseCase {
+
+    private final UserRepositoryPort userRepositoryPort;
+
+    public Optional<User> execute(String email) {
+        return userRepositoryPort.findByEmail(email);
+    }
+}
