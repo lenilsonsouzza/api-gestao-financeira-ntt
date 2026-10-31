@@ -2,7 +2,9 @@ package com.financeiro.ms1usuarios.application.usecase;
 
 import com.financeiro.ms1usuarios.application.ports.out.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class DeleteUserUseCase {
     private final UserRepositoryPort userRepositoryPort;

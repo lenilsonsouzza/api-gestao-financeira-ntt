@@ -4,6 +4,7 @@ import com.financeiro.ms1usuarios.application.usecase.*;
 import com.financeiro.ms1usuarios.domain.model.User;
 import com.financeiro.ms1usuarios.infrastructure.web.dto.UserRequestDTO;
 import com.financeiro.ms1usuarios.infrastructure.web.dto.UserResponseDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
+
     private final CreateUserUseCase createUserUseCase;
     private final FindAllUsersUseCase findAllUsersUseCase;
     private final FindUserByIdUseCase findUserByIdUseCase;
@@ -21,12 +25,13 @@ public class UserController {
     private final FindUserByEmailUseCase findUserByEmailUseCase;
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO requestDTO) {
+    public ResponseEntity<UserResponseDTO> create(@RequestBody @Valid UserRequestDTO requestDTO) {
         User user = new User(null, requestDTO.name(), requestDTO.email(), requestDTO.password());
         User savedUser = createUserUseCase.execute(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDTO.fromDomain(savedUser));
     }
 
+    @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findAll() {
         List<UserResponseDTO> users = findAllUsersUseCase.Execute()
                 .stream()
@@ -41,7 +46,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @RequestBody UserRequestDTO requestDTO) {
+    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @RequestBody @Valid UserRequestDTO requestDTO) {
         User user = new User(id, requestDTO.name(), requestDTO.email(), requestDTO.password());
         User updatedUser = updateUserUseCase.execute(id, user);
         return ResponseEntity.ok(UserResponseDTO.fromDomain(updatedUser));
@@ -52,7 +57,7 @@ public class UserController {
         deleteUserUseCase.execute(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     @GetMapping("/email/{email}")
     public ResponseEntity<UserResponseDTO> findByEmail(@PathVariable String email) {
         return findUserByEmailUseCase.execute(email)
