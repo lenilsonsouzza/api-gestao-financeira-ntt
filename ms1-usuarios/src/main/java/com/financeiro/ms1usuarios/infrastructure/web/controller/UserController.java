@@ -33,7 +33,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findAll() {
-        List<UserResponseDTO> users = findAllUsersUseCase.Execute()
+        List<UserResponseDTO> users = findAllUsersUseCase.execute()
                 .stream()
                 .map(UserResponseDTO::fromDomain).toList();
         return ResponseEntity.ok(users);

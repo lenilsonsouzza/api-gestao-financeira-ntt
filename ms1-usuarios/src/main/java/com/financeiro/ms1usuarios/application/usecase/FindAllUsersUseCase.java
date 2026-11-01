@@ -14,7 +14,7 @@ public class FindAllUsersUseCase {
 
     private final UserRepositoryPort userRepositoryPort;
 
-    public List<User> Execute(){
+    public List<User> execute(){
         return userRepositoryPort.findAll();
     }
 }
