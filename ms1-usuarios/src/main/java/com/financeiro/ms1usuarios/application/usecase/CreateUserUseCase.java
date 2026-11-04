@@ -18,9 +18,14 @@ public class CreateUserUseCase implements CreateUserInboundPort {
 
     @Override
     public User create(User user){
-        if(userRepositoryPort.findByEmail(user.getEmail()).isPresent()){
-            throw new EmailAlreadyExistsException(user.getEmail());
+
+        String normalizedEmail = user.getEmail().trim().toLowerCase();
+
+        if(userRepositoryPort.findByEmail(normalizedEmail).isPresent()){
+            throw new EmailAlreadyExistsException(normalizedEmail);
         }
+
+        user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return  userRepositoryPort.save(user);
