@@ -1,5 +1,6 @@
 package com.financeiro.ms1usuarios.infrastructure.web.exception;
 
+import com.financeiro.ms1usuarios.domain.exception.EmailAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -45,12 +46,25 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("status", HttpStatus.CONFLICT.value());
         response.put("error", "Conflito de Dados / Regra de Negócio");
-        response.put("message", "Já existe um registro com esse e-mail).");
+        response.put("message", "Já existe um registro com esse e-mail");
         response.put("path", request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(response);
+    }
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity handleEmailAlreadyExists(
+            EmailAlreadyExistsException ex, HttpServletRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.CONFLICT.value());
+        response.put("error", "Conflito de Regra de Negócio");
+        response.put("message", ex.getMessage());
+        response.put("path", request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
 

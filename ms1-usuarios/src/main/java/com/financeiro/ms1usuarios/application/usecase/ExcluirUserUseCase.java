@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class DeleteUserUseCase {
+public class ExcluirUserUseCase {
     private final UserRepositoryPort userRepositoryPort;
 
     public void execute(Long id){
