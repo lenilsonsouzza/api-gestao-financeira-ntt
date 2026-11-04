@@ -1,8 +1,11 @@
 package com.financeiro.ms1usuarios.infrastructure.web.controller;
 
 
+import com.financeiro.ms1usuarios.application.ports.in.CreateUserInboundPort;
+import com.financeiro.ms1usuarios.application.ports.in.ImportUsersCsvInboundPort;
 import com.financeiro.ms1usuarios.application.usecase.ImportUsersCsvUseCase;
 import com.financeiro.ms1usuarios.domain.model.User;
+import com.financeiro.ms1usuarios.infrastructure.web.dto.CsvImportReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +25,13 @@ import java.util.List;
 @RestController
 public class UserCsvController {
 
-    private final ImportUsersCsvUseCase importUsersCsvUseCase;
+    private  final ImportUsersCsvInboundPort importUsersCsvInboundPort;
 
     @Operation(summary = "Cadastrar varios Usuários",description = "Realiza o Cadastro de varios Usuários atraves de um arquivo CSV")
     @PostMapping("/import-csv")
-    public ResponseEntity<List<User>> importCsv(@RequestParam("file")MultipartFile file) {
-        List<User> users = importUsersCsvUseCase.execute(file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(users);
+    public ResponseEntity<CsvImportReportResponse> importCsv(@RequestParam("file")MultipartFile file) {
+        CsvImportReportResponse report = importUsersCsvInboundPort.execute(file);
+        return ResponseEntity.status(HttpStatus.OK).body(report);
     }
 
 }

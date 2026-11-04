@@ -37,6 +37,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    // Trata argumentos ilegais (ex: cabeçalho CSV inválido, parâmetros incorretos) -> 400 BAD REQUEST
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity handleIllegalArgument(
+            IllegalArgumentException ex, HttpServletRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("error", "Requisição Inválida");
+        response.put("message", ex.getMessage());
+        response.put("path", request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+
 
 
 // Trata erros de violação de integridade no banco
@@ -53,6 +69,9 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(response);
     }
+
+
+    // Trata e-mail já existente na regra de negócio
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity handleEmailAlreadyExists(
             EmailAlreadyExistsException ex, HttpServletRequest request) {
@@ -75,11 +94,11 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.NOT_FOUND.value());
-        response.put("error", "Não Encontrado / Regra de Negócio");
+        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.put("error", "Erro Interno do Servidor");
         response.put("message", ex.getMessage());
         response.put("path", request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

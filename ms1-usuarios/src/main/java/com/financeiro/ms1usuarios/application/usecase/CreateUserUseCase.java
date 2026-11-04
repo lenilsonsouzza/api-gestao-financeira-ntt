@@ -1,5 +1,6 @@
 package com.financeiro.ms1usuarios.application.usecase;
 
+import com.financeiro.ms1usuarios.application.ports.in.CreateUserInboundPort;
 import com.financeiro.ms1usuarios.application.ports.out.UserRepositoryPort;
 import com.financeiro.ms1usuarios.domain.exception.EmailAlreadyExistsException;
 import com.financeiro.ms1usuarios.domain.model.User;
@@ -9,13 +10,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CreateUserUseCase {
+public class CreateUserUseCase implements CreateUserInboundPort {
 
     private final UserRepositoryPort userRepositoryPort;
     private final PasswordEncoder passwordEncoder;
 
 
-    public User execute(User user){
+    @Override
+    public User create(User user){
         if(userRepositoryPort.findByEmail(user.getEmail()).isPresent()){
             throw new EmailAlreadyExistsException(user.getEmail());
         }
