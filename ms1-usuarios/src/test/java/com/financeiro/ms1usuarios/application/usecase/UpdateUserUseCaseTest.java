@@ -1,6 +1,7 @@
 package com.financeiro.ms1usuarios.application.usecase;
 
 import com.financeiro.ms1usuarios.application.ports.out.UserRepositoryPort;
+import com.financeiro.ms1usuarios.domain.exception.UserNotFoundException;
 import com.financeiro.ms1usuarios.domain.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UpdateUserUseCaseTest {
+
     @Mock
     private UserRepositoryPort userRepositoryPort;
 
@@ -49,8 +51,8 @@ public class UpdateUserUseCaseTest {
     }
 
     @Test
-    @DisplayName("Deve lançar exceção ao tentar atualizar usuário que não existe")
-    public void shouldThrowExceptionWhenUpdatingNonExistentUser() {
+    @DisplayName("Deve lançar UserNotFoundException ao tentar atualizar usuário que não existe")
+    public void shouldThrowUserNotFoundExceptionWhenUpdatingNonExistentUser() {
         // Arrange
         Long userId = 99L;
         User updatedData = new User(userId, "Nome", "email@email.com", "senha");
@@ -58,13 +60,13 @@ public class UpdateUserUseCaseTest {
         when(userRepositoryPort.findById(userId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
             updateUserUseCase.update(userId, updatedData);
         });
 
-        assertEquals("Usuario não encontrado com o ID: 99", exception.getMessage());
+        // Corrigido com acento no "Usuário"
+        assertEquals("Usuário não encontrado com o ID: 99", exception.getMessage());
         verify(userRepositoryPort, times(1)).findById(userId);
         verify(userRepositoryPort, never()).save(any(User.class));
     }
-
 }

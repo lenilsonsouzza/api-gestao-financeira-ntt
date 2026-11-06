@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.financeiro.ms1usuarios.domain.exception.UserNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -85,6 +86,19 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity handleUserNotFound(
+            UserNotFoundException ex, HttpServletRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.NOT_FOUND.value());
+        response.put("error", "Não Encontrado");
+        response.put("message", ex.getMessage());
+        response.put("path", request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 
 
     // Trata exceções gerais de negócio (como usuário não encontrado)
@@ -96,7 +110,7 @@ public class GlobalExceptionHandler {
         response.put("timestamp", LocalDateTime.now());
         response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         response.put("error", "Erro Interno do Servidor");
-        response.put("message", ex.getMessage());
+        response.put("message", "Ocorreu um erro inesperado no servidor.");
         response.put("path", request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
