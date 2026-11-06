@@ -1,7 +1,8 @@
-package com.gestaofinanceira.ms2transactions.adapter;
+package com.gestaofinanceira.ms2transactions.infrastructure.adapter;
 
 import com.gestaofinanceira.ms2transactions.domain.ports.out.ExchangeRateServicePort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
@@ -13,17 +14,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BrasilApiAdapter implements ExchangeRateServicePort {
 
+
     private final RestTemplate restTemplate;
 
-
-    private static final String BRASIL_API_URL = "https://brasilapi.com.br/api/cambio/v1/cotacao/";
+    @Value("${brasil.api.url}")
+    private String brasilApiUrl;
 
     @Override
     public BigDecimal getExchangeRate(String currency) {
         String targetCurrency = currency.toUpperCase();
         try {
-            String url = BRASIL_API_URL + targetCurrency;
-
+            String url = brasilApiUrl + targetCurrency;
 
             ResponseEntity response = restTemplate.getForEntity(url, Map.class);
 

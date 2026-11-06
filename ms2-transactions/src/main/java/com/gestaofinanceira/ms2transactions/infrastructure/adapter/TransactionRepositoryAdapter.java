@@ -1,4 +1,4 @@
-package com.gestaofinanceira.ms2transactions.adapter;
+package com.gestaofinanceira.ms2transactions.infrastructure.adapter;
 
 import com.gestaofinanceira.ms2transactions.domain.model.Transaction;
 import com.gestaofinanceira.ms2transactions.domain.ports.out.TransactionRepositoryPort;

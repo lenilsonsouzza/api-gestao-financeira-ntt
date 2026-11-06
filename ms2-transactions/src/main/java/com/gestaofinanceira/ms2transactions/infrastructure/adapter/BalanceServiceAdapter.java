@@ -1,21 +1,22 @@
-package com.gestaofinanceira.ms2transactions.adapter;
+package com.gestaofinanceira.ms2transactions.infrastructure.adapter;
 
 import com.gestaofinanceira.ms2transactions.domain.ports.out.BalanceServicePort;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 
 @Component
+@RequiredArgsConstructor
 public class BalanceServiceAdapter implements BalanceServicePort {
 
     private final RestTemplate restTemplate;
-    // URL base da nossa MockAPI (pode ser configurada no application.yml posteriormente)
-    private static final String MOCK_API_URL = "https://api.mock-exemplo.com/users/";
 
-    public BalanceServiceAdapter(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    @Value("${app.client.mock-api-url}")
+    private String mockApiUrl;
+
 
     @Override
     public BigDecimal getBalance(Long userId) {
@@ -34,7 +35,7 @@ public class BalanceServiceAdapter implements BalanceServicePort {
     @Override
     public boolean validateLimit(Long userId, BigDecimal amount) {
         BigDecimal currentBalance = getBalance(userId);
-        // Regra simples: A transação é permitida se o saldo for maior ou igual ao valor pretendido
+
         return currentBalance.compareTo(amount) >= 0;
     }
 }
