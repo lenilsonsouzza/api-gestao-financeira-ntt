@@ -5,6 +5,8 @@ import com.gestaofinanceira.ms2transactions.domain.ports.out.ExchangeRateService
 import com.gestaofinanceira.ms2transactions.domain.ports.out.TransactionRepositoryPort;
 import com.gestaofinanceira.ms2transactions.domain.ports.out.UserValidationPort;
 import com.gestaofinanceira.ms2transactions.domain.usecase.CreateTransactionUseCase;
+import com.gestaofinanceira.ms2transactions.domain.usecase.ExpenseAnalysisUseCase;
+import com.gestaofinanceira.ms2transactions.domain.usecase.GetBalanceUseCase;
 import com.gestaofinanceira.ms2transactions.domain.usecase.GetTransactionWithExchangeUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,5 +33,14 @@ public class BeanConfig {
             TransactionRepositoryPort transactionRepositoryPort,
             ExchangeRateServicePort exchangeRateServicePort) {
         return new GetTransactionWithExchangeUseCase(transactionRepositoryPort, exchangeRateServicePort);
+    }
+    @Bean
+    public ExpenseAnalysisUseCase expenseAnalysisUseCase(TransactionRepositoryPort transactionRepositoryPort) {
+        return new ExpenseAnalysisUseCase(transactionRepositoryPort);
+    }
+
+    @Bean
+    public GetBalanceUseCase getBalanceUseCase(BalanceServicePort balanceServicePort) {
+        return new GetBalanceUseCase(balanceServicePort);
     }
 }

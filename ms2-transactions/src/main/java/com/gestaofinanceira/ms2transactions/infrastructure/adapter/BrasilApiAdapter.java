@@ -1,55 +1,45 @@
 package com.gestaofinanceira.ms2transactions.infrastructure.adapter;
 
 import com.gestaofinanceira.ms2transactions.domain.ports.out.ExchangeRateServicePort;
+import com.gestaofinanceira.ms2transactions.infrastructure.client.BrasilApiClient;
+import com.gestaofinanceira.ms2transactions.infrastructure.client.dto.BrasilApiExchangeResponseWrapperDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class BrasilApiAdapter implements ExchangeRateServicePort {
 
-
-    private final RestTemplate restTemplate;
-
-    @Value("${brasil.api.url}")
-    private String brasilApiUrl;
+    private final BrasilApiClient brasilApiClient;
 
     @Override
     public BigDecimal getExchangeRate(String currency) {
         String targetCurrency = currency.toUpperCase();
-        try {
-            String url = brasilApiUrl + targetCurrency;
+        LocalDate date = LocalDate.now();
 
-            ResponseEntity response = restTemplate.getForEntity(url, Map.class);
+        for (int i = 0; i < 5; i++) {
+            String formattedDate = date.minusDays(i).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            try {
+                log.info("A consultar cotação para {} na data {}", targetCurrency, formattedDate);
+                BrasilApiExchangeResponseWrapperDto response = brasilApiClient.getCotacaoMoeda(targetCurrency, formattedDate);
 
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                Map body = (Map) response.getBody();
-                Object rateObj = body.get("valorCotacao");
-
-                if (rateObj != null) {
-                    return new BigDecimal(rateObj.toString());
+                if (response != null && response.cotacoes() != null && !response.cotacoes().isEmpty()) {
+                    BigDecimal cotacaoVenda = response.cotacoes().get(0).cotacaoVenda();
+                    if (cotacaoVenda != null) {
+                        return cotacaoVenda;
+                    }
                 }
+            } catch (Exception e) {
+                log.warn("Tentativa falhou para a data {}: {}", formattedDate, e.getMessage());
             }
-
-            return getFallbackRate(targetCurrency);
-
-        } catch (Exception e) {
-            System.err.println("[WARN] Falha ao consultar BrasilAPI para a moeda " + targetCurrency + ". A utilizar taxa de fallback. Erro: " + e.getMessage());
-            return getFallbackRate(targetCurrency);
         }
-    }
 
-    private BigDecimal getFallbackRate(String currency) {
-        return switch (currency) {
-            case "USD" -> new BigDecimal("5.50");
-            case "EUR" -> new BigDecimal("6.00");
-            default -> BigDecimal.ONE;
-        };
+        throw new IllegalArgumentException("Não foi possível encontrar cotação válida para a moeda: " + targetCurrency);
     }
 }

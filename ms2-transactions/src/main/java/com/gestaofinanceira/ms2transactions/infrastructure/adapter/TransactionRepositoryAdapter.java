@@ -8,6 +8,9 @@ import com.gestaofinanceira.ms2transactions.infrastructure.persistence.repositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +37,17 @@ public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
     @Override
     public List<Transaction> findByUserId(Long userId) {
         return springTransactionRepository.findByUserId(userId).stream()
+                .map(transactionMapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Transaction> findByUserIdAndPeriod(Long userId, LocalDate starDate, LocalDate endDate) {
+        LocalDateTime startDateTime = starDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+
+        return springTransactionRepository.findByUserIdAndTimestampBetween(userId, startDateTime, endDateTime)
+                .stream()
                 .map(transactionMapper::toDomain)
                 .toList();
     }
