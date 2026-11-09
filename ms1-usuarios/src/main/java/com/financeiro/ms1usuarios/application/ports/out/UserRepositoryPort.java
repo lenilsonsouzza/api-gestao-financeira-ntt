@@ -14,6 +14,6 @@ public interface UserRepositoryPort {
 
     List<User> findAll();
 
-    public void deletaById(Long id);
+    public void deleteById(Long id);
 
 }

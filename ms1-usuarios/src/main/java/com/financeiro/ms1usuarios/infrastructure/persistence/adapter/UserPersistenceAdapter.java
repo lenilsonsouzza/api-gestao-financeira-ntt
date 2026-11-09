@@ -45,7 +45,7 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public void deletaById(Long id) {
+    public void deleteById(Long id) {
         springDataUserRepository.deleteById(id);
     }
 }

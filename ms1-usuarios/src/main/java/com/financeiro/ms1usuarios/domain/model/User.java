@@ -1,7 +1,7 @@
 package com.financeiro.ms1usuarios.domain.model;
 
 public class User {
-    private Long Id;
+    private Long id;
     private String name;
     private String email;
     private String password;
@@ -10,18 +10,18 @@ public class User {
     }
 
     public User(Long id, String name, String email, String password) {
-        Id = id;
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
