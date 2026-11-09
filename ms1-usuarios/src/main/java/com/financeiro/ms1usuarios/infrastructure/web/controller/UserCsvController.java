@@ -21,7 +21,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Tag(name = "Cadastro em Massa",description = "Cadastrar usuarios em Massa por Arquivo CSV")
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RestController
 public class UserCsvController {
 

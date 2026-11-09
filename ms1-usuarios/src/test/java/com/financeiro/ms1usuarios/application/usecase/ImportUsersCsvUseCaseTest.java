@@ -10,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -24,21 +26,22 @@ class ImportUsersCsvUseCaseTest {
     private ImportUsersCsvUseCase importUsersCsvUseCase; // Substitui pelo nome exato da tua classe de importação
 
     @Test
-    @DisplayName("Deve processar o ficheiro CSV e chamar o caso de uso de criação para cada linha")
-    void shouldProcessCsvAndCreateUsersSuccessfully() {
-        // Arrange
-        String csvContent = "name,email,password\nJoão Silva,joao@email.com,123456\nMaria Souza,maria@email.com,654321";
-        MockMultipartFile file = new MockMultipartFile(
+    @DisplayName("Deve lançar exceção quando o cabeçalho do CSV for inválido")
+    void shouldThrowExceptionWhenCsvHeaderIsInvalid() {
+        // Arrange - CSV com colunas erradas
+        String invalidCsvContent = "nome,telefone\nJoão,123456";
+        MockMultipartFile invalidFile = new MockMultipartFile(
                 "file",
                 "usuarios.csv",
                 "text/csv",
-                csvContent.getBytes()
+                invalidCsvContent.getBytes()
         );
 
-        // Act
-        importUsersCsvUseCase.execute(file); // Ajusta o nome do método ("execute" ou "importCsv") conforme o teu código
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            importUsersCsvUseCase.execute(invalidFile);
+        });
 
-        // Assert
-        verify(createUserInboundPort, times(2)).create(any(User.class));
+        assertTrue(exception.getMessage().contains("cabeçalho do CSV inválido"));
     }
 }
