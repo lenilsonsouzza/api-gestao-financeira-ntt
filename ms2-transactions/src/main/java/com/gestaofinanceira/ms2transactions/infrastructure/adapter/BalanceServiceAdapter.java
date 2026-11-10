@@ -55,4 +55,39 @@ public class BalanceServiceAdapter implements BalanceServicePort {
             throw new RuntimeException("Serviço de saldo indisponível no momento");
         }
     }
+
+    @Override
+    public void debit(Long userId, BigDecimal amount) {
+        BalanceResponseDto current = balanceMockClient.getBalanceAndLimits(userId);
+        if (current != null && current.saldo() != null) {
+            BigDecimal newBalance = current.saldo().subtract(amount);
+
+            // Cria um DTO atualizado com o novo saldo mantendo os limites e ID
+            BalanceResponseDto updated = new BalanceResponseDto(
+                    current.userId(),
+                    newBalance,
+                    current.limiteDiario(),
+                    current.limitePorTransacao()
+            );
+
+            balanceMockClient.updateBalance(userId, updated);
+        }
+    }
+
+    @Override
+    public void credit(Long userId, BigDecimal amount) {
+        BalanceResponseDto current = balanceMockClient.getBalanceAndLimits(userId);
+        if (current != null && current.saldo() != null) {
+            BigDecimal newBalance = current.saldo().add(amount);
+
+            BalanceResponseDto updated = new BalanceResponseDto(
+                    current.userId(),
+                    newBalance,
+                    current.limiteDiario(),
+                    current.limitePorTransacao()
+            );
+
+            balanceMockClient.updateBalance(userId, updated);
+        }
+    }
 }

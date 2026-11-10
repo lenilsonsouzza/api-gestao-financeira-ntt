@@ -1,6 +1,7 @@
 package com.gestaofinanceira.ms2transactions.infrastructure.web.dto;
 
 import com.gestaofinanceira.ms2transactions.domain.model.TransactionType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -17,8 +18,13 @@ public record TransactionRequestDto(
         @Positive(message = "O valor da transação deve ser superior a zero.")
         BigDecimal amount,
 
+
+        @NotBlank(message = "A Descrição é obrigatória.")
         String description,
+
+        @NotBlank(message = "A Categoria é obrigatória.")
         String category,
+
         Long destinationUserId
 ) {
 }

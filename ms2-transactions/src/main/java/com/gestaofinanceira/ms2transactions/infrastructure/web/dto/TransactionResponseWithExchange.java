@@ -2,14 +2,10 @@ package com.gestaofinanceira.ms2transactions.infrastructure.web.dto;
 
 import com.gestaofinanceira.ms2transactions.domain.model.Transaction;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.List;
 
 public record TransactionResponseWithExchange(
         Transaction transaction,
-        String targetCurrency,
-        BigDecimal exchangeRate,
-        BigDecimal convertedAmount,
-        LocalDate rateDate,
+        List<ExchangeDetailDto> conversoes,
         String message
 ) {}

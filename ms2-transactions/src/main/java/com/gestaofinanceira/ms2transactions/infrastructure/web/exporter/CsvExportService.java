@@ -1,50 +1,78 @@
 package com.gestaofinanceira.ms2transactions.infrastructure.web.exporter;
 
+import com.gestaofinanceira.ms2transactions.domain.model.Transaction;
 import com.gestaofinanceira.ms2transactions.domain.usecase.ExpenseAnalysisUseCase;
 import org.springframework.stereotype.Service;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class CsvExportService {
 
-    public String exportExpenseAnalysisToCsv(ExpenseAnalysisUseCase.ExpenseAnalysisResult result) {
-        StringWriter writer = new StringWriter();
-        PrintWriter csvWriter = new PrintWriter(writer);
+    public byte[] exportExpenseReport(ExpenseAnalysisUseCase.ExpenseAnalysisResult analysis, List<Transaction> transactions) {
+        StringBuilder csv = new StringBuilder("\uFEFF"); // BOM UTF-8 para acentos no Excel
 
+        // 1. Cabeçalho Executivo do Relatório
+        csv.append("RELATORIO DE DESPESAS\n");
+        csv.append("Periodo Inicial;").append(analysis.startDate()).append("\n");
+        csv.append("Periodo Final;").append(analysis.endDate()).append("\n");
+        csv.append("Total Geral;").append(formatMoney(analysis.totalGeneral())).append("\n\n");
 
-        csvWriter.println("RELATORIO DE ANALISE DE DESPESAS");
-        csvWriter.println("Periodo Inicial," + result.startDate());
-        csvWriter.println("Periodo Final," + result.endDate());
-        csvWriter.println("Total Geral," + result.totalGeneral());
-        csvWriter.println();
-
-
-        csvWriter.println("=== DESPESAS POR CATEGORIA ===");
-        csvWriter.println("Categoria,Valor");
-        for (Map.Entry<String, java.math.BigDecimal> entry : result.expensesByCategory().entrySet()) {
-            csvWriter.println(entry.getKey() + "," + entry.getValue());
+        // 2. Resumo por Categoria
+        csv.append("=== RESUMO POR CATEGORIA ===\n");
+        csv.append("Categoria;Total\n");
+        for (Map.Entry<String, BigDecimal> entry : analysis.expensesByCategory().entrySet()) {
+            csv.append(field(entry.getKey())).append(";")
+                    .append(formatMoney(entry.getValue())).append("\n");
         }
-        csvWriter.println();
+        csv.append("\n");
 
-
-        csvWriter.println("=== DESPESAS POR DIA ===");
-        csvWriter.println("Data,Valor");
-        for (Map.Entry<String, java.math.BigDecimal> entry : result.expensesByDay().entrySet()) {
-            csvWriter.println(entry.getKey() + "," + entry.getValue());
+        // 3. Resumo por Dia
+        csv.append("=== RESUMO POR DIA ===\n");
+        csv.append("Data;Total\n");
+        for (Map.Entry<String, BigDecimal> entry : analysis.expensesByDay().entrySet()) {
+            csv.append(entry.getKey()).append(";")
+                    .append(formatMoney(entry.getValue())).append("\n");
         }
-        csvWriter.println();
+        csv.append("\n");
 
+        // 4. Resumo por Mês
+        csv.append("=== RESUMO POR MES ===\n");
+        csv.append("Mes;Total\n");
+        for (Map.Entry<String, BigDecimal> entry : analysis.expensesByMonth().entrySet()) {
+            csv.append(entry.getKey()).append(";")
+                    .append(formatMoney(entry.getValue())).append("\n");
+        }
+        csv.append("\n");
 
-        csvWriter.println("=== DESPESAS POR MES ===");
-        csvWriter.println("Mes,Valor");
-        for (Map.Entry<String, java.math.BigDecimal> entry : result.expensesByMonth().entrySet()) {
-            csvWriter.println(entry.getKey() + "," + entry.getValue());
+        // 5. Transações Detalhadas (a listagem linha a linha que já tinhas)
+        csv.append("=== DETALHE DAS TRANSACOES ===\n");
+        csv.append("data;tipo;categoria;descricao;valor;status;motivo\n");
+
+        for (Transaction t : transactions) {
+            csv.append(t.getTimestamp() != null ? t.getTimestamp().toString().replace('T', ' ') : "").append(";")
+                    .append(field(t.getType() != null ? t.getType().name() : "")).append(";")
+                    .append(field(t.getCategory())).append(";")
+                    .append(field(t.getDescription())).append(";")
+                    .append(formatMoney(t.getAmount())).append(";")
+                    .append(t.getStatus() != null ? t.getStatus().name() : "").append(";")
+                    .append(field(t.getRejectionReason())).append('\n');
         }
 
-        return writer.toString();
+        return csv.toString().getBytes(StandardCharsets.UTF_8);
     }
 
+    private String formatMoney(BigDecimal value) {
+        if (value == null) return "0,00";
+        return value.toPlainString().replace('.', ',');
+    }
+
+    private String field(String value) {
+        if (value == null) return "";
+        String v = value.replace("\"", "\"\"");
+        return "\"" + v + "\"";
+    }
 }

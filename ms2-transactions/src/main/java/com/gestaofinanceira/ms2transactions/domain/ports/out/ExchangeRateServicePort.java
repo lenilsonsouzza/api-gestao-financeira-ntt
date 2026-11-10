@@ -1,7 +1,10 @@
 package com.gestaofinanceira.ms2transactions.domain.ports.out;
 
+import com.gestaofinanceira.ms2transactions.domain.model.Cotacao;
+
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public interface ExchangeRateServicePort {
-    BigDecimal getExchangeRate(String currency);
+    Optional<Cotacao> buscar(String moeda);
 }
