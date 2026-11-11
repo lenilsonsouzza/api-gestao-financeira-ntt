@@ -23,15 +23,19 @@ public class GetTransactionWithExchangeUseCase {
     private final TransactionRepositoryPort transactionRepositoryPort;
     private final ExchangeRateServicePort exchangeRateServicePort;
 
-    public TransactionResponseWithExchange execute(Long transactionId) {
-        // 1. Busca a transação pelo ID
+    public TransactionResponseWithExchange execute(Long transactionId, Long userId) {
+
         Transaction transaction = transactionRepositoryPort.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transação não encontrada com o ID: " + transactionId));
+
+
+        if (!transaction.getUserId().equals(userId)) {
+            throw new RuntimeException("Acesso negado: Esta transação não pertence ao utilizador autenticado.");
+        }
 
         List<ExchangeDetailDto> conversoes = new ArrayList<>();
         String aviso = null;
 
-        // 2. Valida se a transação está APROVADA antes de buscar o câmbio
         if (TransactionStatus.APPROVED.equals(transaction.getStatus())) {
             for (String moeda : List.of("USD", "EUR")) {
                 try {

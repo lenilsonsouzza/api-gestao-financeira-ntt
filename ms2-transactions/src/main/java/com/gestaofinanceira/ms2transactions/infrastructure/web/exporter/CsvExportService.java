@@ -5,6 +5,7 @@ import com.gestaofinanceira.ms2transactions.domain.usecase.ExpenseAnalysisUseCas
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -13,15 +14,13 @@ import java.util.Map;
 public class CsvExportService {
 
     public byte[] exportExpenseReport(ExpenseAnalysisUseCase.ExpenseAnalysisResult analysis, List<Transaction> transactions) {
-        StringBuilder csv = new StringBuilder("\uFEFF"); // BOM UTF-8 para acentos no Excel
+        StringBuilder csv = new StringBuilder("\uFEFF");
 
-        // 1. Cabeçalho Executivo do Relatório
         csv.append("RELATORIO DE DESPESAS\n");
         csv.append("Periodo Inicial;").append(analysis.startDate()).append("\n");
         csv.append("Periodo Final;").append(analysis.endDate()).append("\n");
         csv.append("Total Geral;").append(formatMoney(analysis.totalGeneral())).append("\n\n");
 
-        // 2. Resumo por Categoria
         csv.append("=== RESUMO POR CATEGORIA ===\n");
         csv.append("Categoria;Total\n");
         for (Map.Entry<String, BigDecimal> entry : analysis.expensesByCategory().entrySet()) {
@@ -30,7 +29,6 @@ public class CsvExportService {
         }
         csv.append("\n");
 
-        // 3. Resumo por Dia
         csv.append("=== RESUMO POR DIA ===\n");
         csv.append("Data;Total\n");
         for (Map.Entry<String, BigDecimal> entry : analysis.expensesByDay().entrySet()) {
@@ -39,7 +37,6 @@ public class CsvExportService {
         }
         csv.append("\n");
 
-        // 4. Resumo por Mês
         csv.append("=== RESUMO POR MES ===\n");
         csv.append("Mes;Total\n");
         for (Map.Entry<String, BigDecimal> entry : analysis.expensesByMonth().entrySet()) {
@@ -48,7 +45,6 @@ public class CsvExportService {
         }
         csv.append("\n");
 
-        // 5. Transações Detalhadas (a listagem linha a linha que já tinhas)
         csv.append("=== DETALHE DAS TRANSACOES ===\n");
         csv.append("data;tipo;categoria;descricao;valor;status;motivo\n");
 
@@ -67,11 +63,22 @@ public class CsvExportService {
 
     private String formatMoney(BigDecimal value) {
         if (value == null) return "0,00";
-        return value.toPlainString().replace('.', ',');
+
+        return value.setScale(2, RoundingMode.HALF_UP).toPlainString().replace('.', ',');
     }
 
     private String field(String value) {
         if (value == null) return "";
+
+
+        String trimmed = value.trim();
+        if (!trimmed.isEmpty()) {
+            char firstChar = trimmed.charAt(0);
+            if (firstChar == '=' || firstChar == '+' || firstChar == '-' || firstChar == '@') {
+                value = "'" + value;
+            }
+        }
+
         String v = value.replace("\"", "\"\"");
         return "\"" + v + "\"";
     }

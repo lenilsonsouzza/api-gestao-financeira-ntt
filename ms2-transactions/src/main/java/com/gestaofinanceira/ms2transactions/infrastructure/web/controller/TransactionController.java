@@ -13,12 +13,15 @@ import com.gestaofinanceira.ms2transactions.infrastructure.web.exporter.CsvExpor
 import com.gestaofinanceira.ms2transactions.infrastructure.web.dto.ExpenseAnalysisResponseDto;
 import com.gestaofinanceira.ms2transactions.infrastructure.web.dto.TransactionRequestDto;
 import com.gestaofinanceira.ms2transactions.infrastructure.web.dto.TransactionResponseWithExchange;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -27,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/transactions")
+@Tag(name = "Transações", description = "Endpoints para gestão, análise, câmbio e relatórios de transações financeiras")
 public class TransactionController {
     private final CreateTransactionPort createTransactionPort;
     private final GetTransactionWithExchangeUseCase getTransactionWithExchangeUseCase;
@@ -35,10 +39,18 @@ public class TransactionController {
     private final GetBalanceUseCase getBalanceUseCase;
     private final TransactionRepositoryPort transactionRepositoryPort;
 
+    private Long getAuthenticatedUserId() {
+        return (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    @Operation(summary = "Criar uma nova transação", description = "Regista uma nova transação financeira (depósito, levantamento, compra ou transferência) para o utilizador autenticado.")
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@Valid @RequestBody TransactionRequestDto requestDTO) {
+
+        Long authenticatedUserId = getAuthenticatedUserId();
+
         Transaction transaction = new Transaction(
-                requestDTO.userId(),
+                authenticatedUserId,
                 requestDTO.type(),
                 requestDTO.amount(),
                 requestDTO.description(),
@@ -51,17 +63,21 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTransaction);
     }
 
+    @Operation(summary = "Buscar transação com cotação de câmbio", description = "Retorna os detalhes de uma transação específica convertida para moedas estrangeiras (USD, EUR).")
     @GetMapping("/{id}/exchange")
     public ResponseEntity<TransactionResponseWithExchange> getTransactionWithExchange(@PathVariable Long id) {
-        var response = getTransactionWithExchangeUseCase.execute(id);
+        Long userId = getAuthenticatedUserId();
+        var response = getTransactionWithExchangeUseCase.execute(id, userId);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/analysis/{userId}")
+    @Operation(summary = "Obter análise de despesas", description = "Retorna o resumo detalhado e categorizado das despesas do utilizador num determinado período opcional.")
+    @GetMapping("/analysis")
     public ResponseEntity<ExpenseAnalysisResponseDto> getExpenseAnalysis(
-            @PathVariable Long userId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        Long userId = getAuthenticatedUserId();
 
         var result = expenseAnalysisUseCase.execute(userId, startDate, endDate);
 
@@ -77,11 +93,13 @@ public class TransactionController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "/analysis/{userId}/csv", produces = "text/csv;charset=UTF-8")
+    @Operation(summary = "Exportar relatório de despesas em CSV", description = "Gera e transfere um ficheiro CSV contendo o relatório detalhado das despesas aprovadas no período especificado.")
+    @GetMapping(value = "/analysis/csv", produces = "text/csv;charset=UTF-8")
     public ResponseEntity<byte[]> exportAnalysisCsv(
-            @PathVariable Long userId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        Long userId = getAuthenticatedUserId();
 
         var analysisResult = expenseAnalysisUseCase.execute(userId, startDate, endDate);
 
@@ -101,10 +119,11 @@ public class TransactionController {
                 .body(csvBytes);
     }
 
-    @GetMapping("/balance/{userId}")
-    public ResponseEntity<BalanceResponseDto> getBalance(@PathVariable Long userId) {
+    @Operation(summary = "Consultar saldo atual", description = "Retorna o saldo atual consolidado da conta do utilizador autenticado.")
+    @GetMapping("/balance")
+    public ResponseEntity<BalanceResponseDto> getBalance() {
+        Long userId = getAuthenticatedUserId();
         BalanceResponseDto response = getBalanceUseCase.execute(userId);
         return ResponseEntity.ok(response);
     }
-
 }
