@@ -1,0 +1,680 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Scratch Pad
+meta:
+  id: wrk_scratchpad
+  created: 1789683868374
+  modified: 1789683868374
+  description: ""
+collection:
+  - name: projetoSpring
+    meta:
+      id: fld_6d5b301d08cc4a079615b7d125911571
+      created: 1790861330422
+      modified: 1790861337550
+      sortKey: -1790861330422
+      description: ""
+    children:
+      - url: http://localhost:8080/users
+        name: get User
+        meta:
+          id: req_898cdf564f19491b9b7dc244ba09f496
+          created: 1790861343286
+          modified: 1790867767518
+          isPrivate: false
+          description: ""
+          sortKey: -1790861343286
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/orders/1
+        name: get Order
+        meta:
+          id: req_cbeffded52f54e8c9a378a507701f311
+          created: 1790866864987
+          modified: 1790969267699
+          isPrivate: false
+          description: ""
+          sortKey: -1790866864987
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/categories/1
+        name: get Category
+        meta:
+          id: req_63c693c9e0754e4ca084851f44f1b939
+          created: 1790880195331
+          modified: 1790890297730
+          isPrivate: false
+          description: ""
+          sortKey: -1790880195331
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/products/3
+        name: get Product
+        meta:
+          id: req_d3384315f68745a0baa7916f50380a4a
+          created: 1790887990159
+          modified: 1793212350103
+          isPrivate: false
+          description: ""
+          sortKey: -1790887990159
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/users
+        name: New Request
+        meta:
+          id: req_602de228ad9148468cc0acfb25cce40a
+          created: 1790969672950
+          modified: 1793212348210
+          isPrivate: false
+          description: ""
+          sortKey: -1790969672950
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            { 
+                "name": "Bob Brown", 
+                "email": "bob@gmail.com", 
+                "phone": "977557755", 
+                "password": "123456" 
+            } 
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/users/3
+        name: New Request
+        meta:
+          id: req_dfa1f402f3a146a9a55b431c962db8b0
+          created: 1790970331631
+          modified: 1790971083447
+          isPrivate: false
+          description: ""
+          sortKey: -1790970331631
+        method: DELETE
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/users/1
+        name: New Request
+        meta:
+          id: req_ecf9f2c416874070913f92532d8d2992
+          created: 1790971068457
+          modified: 1790971105153
+          isPrivate: false
+          description: ""
+          sortKey: -1790971068457
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            { 
+                "name": "Bob Brown", 
+                "email": "bob@gmail.com", 
+                "phone": "977557755" 
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: API - GESTÃO FINANCEIRA - BECA
+    meta:
+      id: fld_885a0262c0d44f4eb7768b61ba941469
+      created: 1793381332335
+      modified: 1793381332335
+      sortKey: -1793381332335
+      description: ""
+    children:
+      - name: ms1-usuários
+        meta:
+          id: fld_f8e112b544224368b08b42d006ea2d2f
+          created: 1793887911284
+          modified: 1794323054646
+          sortKey: -1793887942260
+          description: ""
+        children:
+          - url: http://localhost:8080/api/users
+            name: Cadastrar
+            meta:
+              id: req_4ad48dc6991d459f8438d7a4ddd2f422
+              created: 1793381343507
+              modified: 1794443273805
+              isPrivate: false
+              description: ""
+              sortKey: -1794214274137
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "name": "delete",
+                  "email": "delete@email.com",
+                  "password": "senha1234"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/api/users/2
+            name: Atualizar
+            meta:
+              id: req_c6cf52ce0411425e9a0bfd1e46e0ce8d
+              created: 1793383357061
+              modified: 1794443245542
+              isPrivate: false
+              description: ""
+              sortKey: -1793887916542
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "name": "ana ATUALIZADO ",
+                  "email": "lenilson@email.com",
+                  "password": "senha123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW5pbHNvbkBlbWFpbC5jb20iLCJ1c2VySWQiOjEsIm5hbWUiOiJsZW5pbHNvbiIsImlhdCI6MTc5NDQ0MzA5MSwiZXhwIjoxNzk0NDQ2NjkxfQ.oiU6na-XFaPu0ANwImq-i70y0hswTYTGCkxdP1IOvgs
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/api/users
+            name: Listar Todos
+            meta:
+              id: req_616e72fbf0c94293a6393d91a3ba6f37
+              created: 1793383547384
+              modified: 1794443326635
+              isPrivate: false
+              description: ""
+              sortKey: -1794105488272
+            method: GET
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFAZW1haWwuY29tIiwidXNlcklkIjoyLCJuYW1lIjoiYW5hIiwiaWF0IjoxNzk0NDQzMzE3LCJleHAiOjE3OTQ0NDY5MTd9.Fi_-rZSExFxXZJlLsQ56LbJ_VeiLN-tNsmtK7IC54nY
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/api/users/2
+            name: Buscar por ID
+            meta:
+              id: req_ce2aae71122144c3ab207a4938b1c28e
+              created: 1793383594856
+              modified: 1794443121861
+              isPrivate: false
+              description: ""
+              sortKey: -1793996702407
+            method: GET
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW5pbHNvbkBlbWFpbC5jb20iLCJ1c2VySWQiOjEsIm5hbWUiOiJsZW5pbHNvbiIsImlhdCI6MTc5NDQ0MzA5MSwiZXhwIjoxNzk0NDQ2NjkxfQ.oiU6na-XFaPu0ANwImq-i70y0hswTYTGCkxdP1IOvgs
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/api/users/email/ana@email.com
+            name: Buscar por EMAIL
+            meta:
+              id: req_8dc1f18606bc4b1e8ac979b841ed38d3
+              created: 1793383627376
+              modified: 1794443145031
+              isPrivate: false
+              description: ""
+              sortKey: -1793942309474.5
+            method: GET
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW5pbHNvbkBlbWFpbC5jb20iLCJ1c2VySWQiOjEsIm5hbWUiOiJsZW5pbHNvbiIsImlhdCI6MTc5NDQ0MzA5MSwiZXhwIjoxNzk0NDQ2NjkxfQ.oiU6na-XFaPu0ANwImq-i70y0hswTYTGCkxdP1IOvgs
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/api/users/1
+            name: Deletar
+            meta:
+              id: req_a042ee1682174b82a56d7a2aa9f927e1
+              created: 1793383686026
+              modified: 1794443290144
+              isPrivate: false
+              description: ""
+              sortKey: -1793887916492
+            method: DELETE
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW5pbHNvbkBlbWFpbC5jb20iLCJ1c2VySWQiOjEsIm5hbWUiOiJsZW5pbHNvbiIsImlhdCI6MTc5NDQ0MzA5MSwiZXhwIjoxNzk0NDQ2NjkxfQ.oiU6na-XFaPu0ANwImq-i70y0hswTYTGCkxdP1IOvgs
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/api/users/import-csv
+            name: Cadastro ( IMPORTAR USUARIOS CSV)
+            meta:
+              id: req_cf0680217bd94e18b1fd80b03a1ec03b
+              created: 1793732425582
+              modified: 1794443434708
+              isPrivate: false
+              description: ""
+              sortKey: -1793887916442
+            method: POST
+            body:
+              mimeType: multipart/form-data
+              params:
+                - name: file
+                  value: ""
+                  description: ""
+                  disabled: false
+                  multiline: false
+                  fileName: C:\Users\josesmel\desenv\DESAFIO
+                    NTT\api-gestao-financeira-ntt\arquivos
+                    teste\usuarios_exemplo_CSV1.csv
+                  type: file
+            headers:
+              - name: Content-Type
+                value: multipart/form-data
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbmFAZW1haWwuY29tIiwidXNlcklkIjoyLCJuYW1lIjoiYW5hIiwiaWF0IjoxNzk0NDQzMzE3LCJleHAiOjE3OTQ0NDY5MTd9.Fi_-rZSExFxXZJlLsQ56LbJ_VeiLN-tNsmtK7IC54nY
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8080/auth/login
+            name: login
+            meta:
+              id: req_8ea668c48ca24b77b7ae6fcd8d722f35
+              created: 1794323060002
+              modified: 1794443315758
+              isPrivate: false
+              description: ""
+              sortKey: -1794323060002
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "email":"ana@email.com",
+                  "password": "senha1234"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              token: ""
+              prefix: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: ms2-transaction
+        meta:
+          id: fld_67ee37d002fb4e2f90c2f6b39c98c508
+          created: 1793887942160
+          modified: 1794257125116
+          sortKey: -1793887942160
+          description: ""
+        children:
+          - url: http://localhost:8082/transactions
+            name: transações/Depoisto
+            meta:
+              id: req_af63fde85aeb490f907d44774ee6d777
+              created: 1793887950613
+              modified: 1794410609094
+              isPrivate: false
+              description: ""
+              sortKey: -1793887950613
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+
+                  "type": "DEPOSIT",
+                  "amount": 500.00,
+                  "description": "Depósito em dinheiro",
+                  "category": "Salário"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsInVzZXJJZCI6MiwibmFtZSI6Im1hcmNlbG8gc291emEiLCJpYXQiOjE3OTQzNjA4NjIsImV4cCI6MTc5NDM2NDQ2Mn0.FZSvke3o2CzHfnzTbgcTVdn4HoufDcAZTBck5NKPLNs
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8082/transactions/33/exchange
+            name: Consultar com Conversão de Moeda
+            meta:
+              id: req_3d23ca4c38b64dc28bd5081d72514b6c
+              created: 1793903408872
+              modified: 1794410605331
+              isPrivate: false
+              description: ""
+              sortKey: -1793903408872
+            method: GET
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYWZhZWxAZW1haWwuY29tIiwidXNlcklkIjozLCJuYW1lIjoicmFmYWVsIHNvdXphIiwiaWF0IjoxNzk0MzYyMDI1LCJleHAiOjE3OTQzNjU2MjV9.c7h47CiuFnrePLdrCT6ci6saYfaPWsrzZCpnEXUZsF4
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8082/transactions
+            name: transações/Compra
+            meta:
+              id: req_c346f99b9a1c4b46a07925e65eb1a7da
+              created: 1793980316139
+              modified: 1794362573307
+              isPrivate: false
+              description: ""
+              sortKey: -1793887933577.5
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "type": "PURCHASE",
+                  "amount": 100.00,
+                  "description": "Compra no supermercado",
+                  "category": "Alimentação"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYWZhZWxAZW1haWwuY29tIiwidXNlcklkIjozLCJuYW1lIjoicmFmYWVsIHNvdXphIiwiaWF0IjoxNzk0MzYyMDI1LCJleHAiOjE3OTQzNjU2MjV9.c7h47CiuFnrePLdrCT6ci6saYfaPWsrzZCpnEXUZsF4
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8082/transactions
+            name: transações/Tansferencia
+            meta:
+              id: req_eb1ed82ae9d743229d68f74018741bfc
+              created: 1793980406662
+              modified: 1794415806005
+              isPrivate: false
+              description: ""
+              sortKey: -1793887925059.75
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "type": "TRANSFER",
+                  "amount": 200.00,
+                  "description": "Pagamento de partilha",
+                  "category": "Transferências",
+                  "destinationUserId": 20
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW5pbHNvbkBlbWFpbC5jb20iLCJ1c2VySWQiOjExLCJuYW1lIjoibGVuaWxzb24gc291emEiLCJpYXQiOjE3OTQ0MTQ0MzYsImV4cCI6MTc5NDQxODAzNn0.wh9NRNx0QdfTVweGWcmLugdkIfSbI_XCt4qzYVkyJq4
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: https://6aee04e3a677fe0fc14fb383.mockapi.io/api/v1/users/1
+            name: teste mock
+            meta:
+              id: req_7b24466d96f549d9b946ff3bcc3b4c7b
+              created: 1793982310483
+              modified: 1794361288526
+              isPrivate: false
+              description: ""
+              sortKey: -1793982310483
+            method: GET
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8082/transactions/analysis?startDate=2026-11-01&endDate=2026-11-30
+            name: Relatório de Gastos por Periodo
+            meta:
+              id: req_94c3d1d5d4e241d6a0e390c87967f884
+              created: 1794165126043
+              modified: 1794361631264
+              isPrivate: false
+              description: ""
+              sortKey: -1794165126043
+            method: GET
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsInVzZXJJZCI6MiwibmFtZSI6Im1hcmNlbG8gc291emEiLCJpYXQiOjE3OTQzNjA4NjIsImV4cCI6MTc5NDM2NDQ2Mn0.FZSvke3o2CzHfnzTbgcTVdn4HoufDcAZTBck5NKPLNs
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8082/transactions/analysis/csv
+            name: Exportar Relatório CSV
+            meta:
+              id: req_04a2278d955c4101bf97b2e88e58d856
+              created: 1794166432582
+              modified: 1794410522241
+              isPrivate: false
+              description: ""
+              sortKey: -1794166432582
+            method: GET
+            parameters:
+              - name: startDate
+                value: 2026-11-01
+                description: ""
+                disabled: false
+              - name: endDate
+                value: 2026-11-30
+                description: ""
+                disabled: false
+            authentication:
+              type: bearer
+              token: ""
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8082/transactions/balance
+            name: Consultar saldo (mockAPi)
+            meta:
+              id: req_925e33549eea466f85392b71028cff58
+              created: 1794169491271
+              modified: 1794415857516
+              isPrivate: false
+              description: ""
+              sortKey: -1794169491271
+            method: GET
+            body:
+              mimeType: multipart/form-data
+            headers:
+              - name: Content-Type
+                value: multipart/form-data
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW5pbHNvbkBlbWFpbC5jb20iLCJ1c2VySWQiOjExLCJuYW1lIjoibGVuaWxzb24gc291emEiLCJpYXQiOjE3OTQ0MTQ0MzYsImV4cCI6MTc5NDQxODAzNn0.wh9NRNx0QdfTVweGWcmLugdkIfSbI_XCt4qzYVkyJq4
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:8082/transactions
+            name: transações/Saque
+            meta:
+              id: req_ac8756b6ea5343e6b9523720d9587df8
+              created: 1794270838682
+              modified: 1794415893198
+              isPrivate: false
+              description: ""
+              sortKey: -1793887942095.25
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "type": "WITHDRAWAL",
+                  "category": "Saque",
+                  "description": "Levantamento em terminal ATM",
+                  "amount": 100
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZW5pbHNvbkBlbWFpbC5jb20iLCJ1c2VySWQiOjExLCJuYW1lIjoibGVuaWxzb24gc291emEiLCJpYXQiOjE3OTQ0MTQ0MzYsImV4cCI6MTc5NDQxODAzNn0.wh9NRNx0QdfTVweGWcmLugdkIfSbI_XCt4qzYVkyJq4
+              prefix: Bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1789683991245
+    modified: 1789683991245
+environments:
+  name: Base Environment
+  meta:
+    id: env_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1789683991242
+    modified: 1789683991242
+    isPrivate: false
