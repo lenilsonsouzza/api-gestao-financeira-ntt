@@ -8,8 +8,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public record TransactionRequestDto(
-        @NotNull(message = "O ID do Usuário é obrigatório.")
-        Long userId,
+
 
         @NotNull(message = "O tipo de transação é obrigatório.")
         TransactionType type,

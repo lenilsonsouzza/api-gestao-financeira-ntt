@@ -22,13 +22,11 @@ public class CreateTransactionUseCase implements CreateTransactionPort {
     @Override
     public Transaction create(Transaction transaction) {
         try {
-
             boolean userExists = userValidationPort.validateUserExists(transaction.getUserId());
             if (!userExists) {
                 transaction.reject("Usuário remetente não encontrado ou inativo no sistema.");
                 return transactionRepositoryPort.save(transaction);
             }
-
 
             if (transaction.getType() == TransactionType.TRANSFER) {
                 if (transaction.getDestinationUserId() == null) {
@@ -42,7 +40,6 @@ public class CreateTransactionUseCase implements CreateTransactionPort {
                     return transactionRepositoryPort.save(transaction);
                 }
 
-
                 if (transaction.getUserId().equals(transaction.getDestinationUserId())) {
                     transaction.reject("Não é permitido transferir para a mesma conta.");
                     return transactionRepositoryPort.save(transaction);
@@ -51,6 +48,7 @@ public class CreateTransactionUseCase implements CreateTransactionPort {
 
 
             if (transaction.getType() == TransactionType.DEPOSIT) {
+                balanceServicePort.credit(transaction.getUserId(), transaction.getAmount());
                 transaction.approve();
                 return transactionRepositoryPort.save(transaction);
             }
@@ -76,7 +74,17 @@ public class CreateTransactionUseCase implements CreateTransactionPort {
 
 
                 if (transaction.getType() == TransactionType.TRANSFER) {
-                    balanceServicePort.credit(transaction.getDestinationUserId(), transaction.getAmount());
+                    try {
+                        balanceServicePort.credit(transaction.getDestinationUserId(), transaction.getAmount());
+                    } catch (Exception e) {
+                        log.error("Falha ao creditar na conta de destino [{}]. Estornando valor para a origem [{}]. Erro: {}",
+                                transaction.getDestinationUserId(), transaction.getUserId(), e.getMessage(), e);
+
+                        balanceServicePort.credit(transaction.getUserId(), transaction.getAmount());
+
+                        transaction.reject("Transação rejeitada: falha no processamento da conta de destino, valor estornado.");
+                        return transactionRepositoryPort.save(transaction);
+                    }
                 }
             }
 
@@ -84,7 +92,7 @@ public class CreateTransactionUseCase implements CreateTransactionPort {
 
         } catch (RuntimeException e) {
             log.error("Erro crítico ao processar transação para o usuário [{}]: {}", transaction.getUserId(), e.getMessage(), e);
-            transaction.reject("Serviço externo indisponível no momento: " + e.getMessage());
+            transaction.reject("Serviço externo indisponível no momento.");
         }
 
         return transactionRepositoryPort.save(transaction);
