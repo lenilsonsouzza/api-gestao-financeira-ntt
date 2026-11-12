@@ -16,14 +16,22 @@ public class FeignClientConfig {
         return new RequestInterceptor() {
             @Override
             public void apply(RequestTemplate template) {
-                ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
-                if (attributes != null) {
-                    HttpServletRequest request = attributes.getRequest();
-                    String authorizationHeader = request.getHeader("Authorization");
+                String targetUrl = template.url();
+                String targetHost = template.feignTarget().url();
 
-                    if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
-                        template.header("Authorization", authorizationHeader);
+                boolean isInternalCall = targetHost.contains("ms1-usuarios") || targetUrl.contains("/users");
+
+                if (isInternalCall) {
+                    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+                    if (attributes != null) {
+                        HttpServletRequest request = attributes.getRequest();
+                        String authorizationHeader = request.getHeader("Authorization");
+
+                        if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
+                            template.header("Authorization", authorizationHeader);
+                        }
                     }
                 }
             }

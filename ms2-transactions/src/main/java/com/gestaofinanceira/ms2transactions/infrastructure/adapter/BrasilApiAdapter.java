@@ -25,13 +25,13 @@ public class BrasilApiAdapter implements ExchangeRateServicePort {
     public Optional<Cotacao> buscar(String moeda) {
         String targetCurrency = moeda.toUpperCase();
 
-        // Começa a procurar a partir de ontem, pois a BrasilAPI bloqueia o dia de hoje
+
         LocalDate dataBase = LocalDate.now().minusDays(1);
 
-        // Formatter estrito no formato americano yyyy-MM-dd
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        // Tenta buscar nos últimos 5 dias anteriores
+
         for (int i = 0; i < 5; i++) {
             LocalDate dataConsulta = dataBase.minusDays(i);
             String formattedDate = dataConsulta.format(formatter);

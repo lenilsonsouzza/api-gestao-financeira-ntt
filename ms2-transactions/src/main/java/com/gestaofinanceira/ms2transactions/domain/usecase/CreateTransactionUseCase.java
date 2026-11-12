@@ -6,10 +6,12 @@ import com.gestaofinanceira.ms2transactions.domain.ports.in.CreateTransactionPor
 import com.gestaofinanceira.ms2transactions.domain.ports.out.BalanceServicePort;
 import com.gestaofinanceira.ms2transactions.domain.ports.out.TransactionRepositoryPort;
 import com.gestaofinanceira.ms2transactions.domain.ports.out.UserValidationPort;
+import com.gestaofinanceira.ms2transactions.infrastructure.client.dto.BalanceResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,18 +36,23 @@ public class CreateTransactionUseCase implements CreateTransactionPort {
                     return transactionRepositoryPort.save(transaction);
                 }
 
-                boolean destUserExists = userValidationPort.validateUserExists(transaction.getDestinationUserId());
-                if (!destUserExists) {
-                    transaction.reject("Usuário de destino não encontrado no sistema.");
-                    return transactionRepositoryPort.save(transaction);
-                }
-
                 if (transaction.getUserId().equals(transaction.getDestinationUserId())) {
                     transaction.reject("Não é permitido transferir para a mesma conta.");
                     return transactionRepositoryPort.save(transaction);
                 }
-            }
 
+                try {
+                    boolean destUserExists = userValidationPort.validateUserExists(transaction.getDestinationUserId());
+                    if (!destUserExists) {
+                        transaction.reject("Usuário de destino não encontrado no sistema.");
+                        return transactionRepositoryPort.save(transaction);
+                    }
+                } catch (Exception e) {
+                    log.error("Erro ao comunicar com MS1 para validar usuário de destino [{}]: {}", transaction.getDestinationUserId(), e.getMessage());
+                    transaction.reject("Erro ao validar usuário de destino no serviço de utilizadores.");
+                    return transactionRepositoryPort.save(transaction);
+                }
+            }
 
             if (transaction.getType() == TransactionType.DEPOSIT) {
                 balanceServicePort.credit(transaction.getUserId(), transaction.getAmount());
@@ -63,15 +70,30 @@ public class CreateTransactionUseCase implements CreateTransactionPort {
                     return transactionRepositoryPort.save(transaction);
                 }
 
+                try {
+                    BalanceResponseDto balanceData = balanceServicePort.getBalanceData(transaction.getUserId());
+                    if (balanceData != null && balanceData.limiteDiario() != null) {
+                        BigDecimal spentToday = transactionRepositoryPort.getSpentToday(transaction.getUserId(), LocalDate.now());
+                        if (spentToday == null) {
+                            spentToday = BigDecimal.ZERO;
+                        }
+
+                        if (spentToday.add(transaction.getAmount()).compareTo(balanceData.limiteDiario()) > 0) {
+                            transaction.reject("Transação rejeitada: Limite diário excedido.");
+                            return transactionRepositoryPort.save(transaction);
+                        }
+                    }
+                } catch (Exception e) {
+                    log.warn("Não foi possível validar o limite diário no serviço externo: {}", e.getMessage());
+                }
+
                 BigDecimal currentBalance = balanceServicePort.getBalance(transaction.getUserId());
                 if (currentBalance.compareTo(transaction.getAmount()) < 0) {
                     transaction.reject("Transação rejeitada: Saldo insuficiente.");
                     return transactionRepositoryPort.save(transaction);
                 }
 
-
                 balanceServicePort.debit(transaction.getUserId(), transaction.getAmount());
-
 
                 if (transaction.getType() == TransactionType.TRANSFER) {
                     try {

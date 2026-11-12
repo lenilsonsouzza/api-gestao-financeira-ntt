@@ -1,6 +1,7 @@
 package com.gestaofinanceira.ms2transactions.infrastructure.adapter;
 
 import com.gestaofinanceira.ms2transactions.domain.model.Transaction;
+import com.gestaofinanceira.ms2transactions.domain.model.TransactionType;
 import com.gestaofinanceira.ms2transactions.domain.ports.out.TransactionRepositoryPort;
 import com.gestaofinanceira.ms2transactions.infrastructure.persistence.entity.TransactionEntity;
 import com.gestaofinanceira.ms2transactions.infrastructure.persistence.mapper.TransactionMapper;
@@ -8,6 +9,7 @@ import com.gestaofinanceira.ms2transactions.infrastructure.persistence.repositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -50,5 +52,17 @@ public class TransactionRepositoryAdapter implements TransactionRepositoryPort {
                 .stream()
                 .map(transactionMapper::toDomain)
                 .toList();
+    }
+    @Override
+    public BigDecimal getSpentToday(Long userId, LocalDate date) {
+        List<Transaction> transactionsToday = findByUserIdAndPeriod(userId, date, date);
+
+        return transactionsToday.stream()
+                .filter(t -> t.getStatus() != null && t.getStatus().name().equals("APPROVED"))
+                .filter(t -> t.getType() == TransactionType.PURCHASE ||
+                        t.getType() == TransactionType.WITHDRAWAL ||
+                        t.getType() == TransactionType.TRANSFER)
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

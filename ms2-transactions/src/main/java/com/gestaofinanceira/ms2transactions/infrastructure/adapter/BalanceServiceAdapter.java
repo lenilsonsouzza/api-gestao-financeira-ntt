@@ -62,7 +62,7 @@ public class BalanceServiceAdapter implements BalanceServicePort {
         if (current != null && current.saldo() != null) {
             BigDecimal newBalance = current.saldo().subtract(amount);
 
-            // Cria um DTO atualizado com o novo saldo mantendo os limites e ID
+
             BalanceResponseDto updated = new BalanceResponseDto(
                     current.userId(),
                     newBalance,
