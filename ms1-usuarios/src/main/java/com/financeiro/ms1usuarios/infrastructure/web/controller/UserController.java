@@ -2,6 +2,7 @@ package com.financeiro.ms1usuarios.infrastructure.web.controller;
 
 import com.financeiro.ms1usuarios.application.ports.in.*;
 import com.financeiro.ms1usuarios.domain.model.User;
+import com.financeiro.ms1usuarios.infrastructure.security.SecurityUtils;
 import com.financeiro.ms1usuarios.infrastructure.web.dto.UserRequestDTO;
 import com.financeiro.ms1usuarios.infrastructure.web.dto.UserResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@Tag(name = "Usuarios",description = "endpoints para gestão e autenticação de Usuários")
+@Tag(name = "Usuarios", description = "endpoints para gestão e autenticação de Usuários")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -27,7 +28,7 @@ public class UserController {
     private final DeleteUserInboundPort deleteUserInboundPort;
     private final FindUserByEmailInboundPort findUserByEmailInboundPort;
 
-    @Operation(summary = "Cadastrar um Novo Usuário",description = "Realiza o Cadastro de um Usuário")
+    @Operation(summary = "Cadastrar um Novo Usuário", description = "Realiza o Cadastro de um Usuário")
     @PostMapping
     public ResponseEntity<UserResponseDTO> create(@RequestBody @Valid UserRequestDTO requestDTO) {
         User user = new User(null, requestDTO.name(), requestDTO.email(), requestDTO.password());
@@ -35,7 +36,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseDTO.fromDomain(savedUser));
     }
 
-    @Operation(summary = "Buscar todos os usuário ", description = "Retorna os detalhes de todos Usuários.")
+    @Operation(summary = "Buscar todos os usuário", description = "Retorna os detalhes de todos Usuários.")
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> findAll() {
         List<UserResponseDTO> users = findAllUsersInboundPort.findAll()
@@ -47,20 +48,26 @@ public class UserController {
     @Operation(summary = "Buscar usuário por ID", description = "Retorna os detalhes de um Usuário específico.")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
-        return findUserByIdInboundPort.findById(id).map(user -> ResponseEntity.ok(UserResponseDTO.fromDomain(user))).orElse(ResponseEntity.notFound().build());
-
+        return findUserByIdInboundPort.findById(id)
+                .map(user -> ResponseEntity.ok(UserResponseDTO.fromDomain(user)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Alterar usuário por ID", description = "Altera os dados de um Usuário específico.")
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @RequestBody @Valid UserRequestDTO requestDTO) {
+        SecurityUtils.verifyIsOwner(id);
+
         User user = new User(id, requestDTO.name(), requestDTO.email(), requestDTO.password());
         User updatedUser = updateUserInboundPort.update(id, user);
         return ResponseEntity.ok(UserResponseDTO.fromDomain(updatedUser));
     }
+
     @Operation(summary = "Excluir usuário por ID", description = "Exclui um Usuário específico.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        SecurityUtils.verifyIsOwner(id);
+
         deleteUserInboundPort.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -72,6 +79,4 @@ public class UserController {
                 .map(user -> ResponseEntity.ok(UserResponseDTO.fromDomain(user)))
                 .orElse(ResponseEntity.notFound().build());
     }
-
-
 }

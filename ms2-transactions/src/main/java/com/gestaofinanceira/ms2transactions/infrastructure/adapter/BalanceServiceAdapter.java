@@ -1,0 +1,93 @@
+package com.gestaofinanceira.ms2transactions.infrastructure.adapter;
+
+import com.gestaofinanceira.ms2transactions.domain.ports.out.BalanceServicePort;
+import com.gestaofinanceira.ms2transactions.infrastructure.client.BalanceMockClient;
+import com.gestaofinanceira.ms2transactions.infrastructure.client.dto.BalanceResponseDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+
+@Component
+@RequiredArgsConstructor
+public class BalanceServiceAdapter implements BalanceServicePort {
+
+    private final BalanceMockClient balanceMockClient;
+
+    @Override
+    public BigDecimal getBalance(Long userId) {
+        try {
+            BalanceResponseDto response = balanceMockClient.getBalanceAndLimits(userId);
+            if (response == null || response.saldo() == null) {
+                throw new IllegalStateException("Resposta inválida da API Mock de saldo.");
+            }
+            return response.saldo();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Serviço de saldo indisponível no momento");
+        }
+    }
+
+    @Override
+    public boolean validateLimit(Long userId, BigDecimal amount) {
+        try {
+            BalanceResponseDto response = balanceMockClient.getBalanceAndLimits(userId);
+            if (response == null || response.limitePorTransacao() == null) {
+                return false;
+            }
+            return amount.compareTo(response.limitePorTransacao()) <= 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Serviço de limite indisponível no momento");
+        }
+    }
+
+    @Override
+    public BalanceResponseDto getBalanceData(Long userId) {
+        try {
+            BalanceResponseDto response = balanceMockClient.getBalanceAndLimits(userId);
+            if (response == null) {
+                throw new IllegalStateException("Resposta inválida da API Mock de saldo.");
+            }
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Serviço de saldo indisponível no momento");
+        }
+    }
+
+    @Override
+    public void debit(Long userId, BigDecimal amount) {
+        BalanceResponseDto current = balanceMockClient.getBalanceAndLimits(userId);
+        if (current != null && current.saldo() != null) {
+            BigDecimal newBalance = current.saldo().subtract(amount);
+
+            // Cria um DTO atualizado com o novo saldo mantendo os limites e ID
+            BalanceResponseDto updated = new BalanceResponseDto(
+                    current.userId(),
+                    newBalance,
+                    current.limiteDiario(),
+                    current.limitePorTransacao()
+            );
+
+            balanceMockClient.updateBalance(userId, updated);
+        }
+    }
+
+    @Override
+    public void credit(Long userId, BigDecimal amount) {
+        BalanceResponseDto current = balanceMockClient.getBalanceAndLimits(userId);
+        if (current != null && current.saldo() != null) {
+            BigDecimal newBalance = current.saldo().add(amount);
+
+            BalanceResponseDto updated = new BalanceResponseDto(
+                    current.userId(),
+                    newBalance,
+                    current.limiteDiario(),
+                    current.limitePorTransacao()
+            );
+
+            balanceMockClient.updateBalance(userId, updated);
+        }
+    }
+}
